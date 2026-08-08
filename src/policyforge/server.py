@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .audit import AuditLedger
 from .compiler import compile_policy
@@ -38,14 +38,12 @@ class PolicyForgeApplication:
 
 
 class Handler(BaseHTTPRequestHandler):
-    server: "PolicyForgeServer"
-
     def do_GET(self) -> None:  # noqa: N802
         if self.path == "/health/live":
             self._json(HTTPStatus.OK, {"status": "ok"})
             return
         if self.path == "/health/ready":
-            entries = self.server.application.audit.verify()
+            entries = self._application.audit.verify()
             self._json(HTTPStatus.OK, {"status": "ready", "audit_entries": entries})
             return
         self._json(HTTPStatus.NOT_FOUND, _error("not_found", "route was not found"))
@@ -69,12 +67,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def _publish(self, tenant_id: str) -> None:
         document = self._read_json()
-        version = self.server.application.publish(tenant_id, document)
+        version = self._application.publish(tenant_id, document)
         self._json(HTTPStatus.OK, {"tenant_id": tenant_id, "version": version})
 
     def _decide(self) -> None:
         request = _authorization_request(self._read_json())
-        decision = self.server.application.engine.authorize(request)
+        decision = self._application.engine.authorize(request)
         self._json(HTTPStatus.OK, _decision_document(decision))
 
     def _handle(self, operation: Any) -> None:
@@ -111,6 +109,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(body)
+
+    @property
+    def _application(self) -> PolicyForgeApplication:
+        return cast("PolicyForgeServer", self.server).application
 
 
 class PolicyForgeServer(ThreadingHTTPServer):

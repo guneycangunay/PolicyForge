@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, TypeGuard
 
 from .models import AuthorizationRequest, Condition, JsonValue
 
@@ -141,5 +141,5 @@ def _resolve_operand(operand: JsonValue, context: Mapping[str, Any]) -> tuple[bo
     return True, current
 
 
-def _is_sequence(value: object) -> bool:
+def _is_sequence(value: object) -> TypeGuard[Sequence[JsonValue]]:
     return isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray))

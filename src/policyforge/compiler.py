@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
-from typing import Any
+from typing import Any, TypeGuard
 
 from .conditions import validate_condition
 from .models import Condition, Effect, JsonValue, PolicyBundle, Rule
@@ -127,5 +127,5 @@ def _freeze_json(value: Any) -> JsonValue:
     raise PolicyValidationError("policy contains a non-JSON value")
 
 
-def _is_sequence(value: object) -> bool:
+def _is_sequence(value: object) -> TypeGuard[Sequence[Any]]:
     return isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray))
