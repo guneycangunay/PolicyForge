@@ -1,0 +1,67 @@
+{
+  "tenant_id": "acme",
+  "version": 1,
+  "rules": [
+    {
+      "id": "deny-frozen-merchant",
+      "effect": "deny",
+      "actions": ["payment.*"],
+      "resources": ["payment:*"],
+      "condition": {
+        "eq": [
+          { "path": "resource.attributes.merchant_status" },
+          { "value": "frozen" }
+        ]
+      }
+    },
+    {
+      "id": "deny-high-risk-refund",
+      "effect": "deny",
+      "actions": ["payment.refund"],
+      "resources": ["payment:*"],
+      "condition": {
+        "gte": [
+          { "path": "environment.risk_score" },
+          { "value": 80 }
+        ]
+      }
+    },
+    {
+      "id": "allow-ops-refund",
+      "effect": "allow",
+      "actions": ["payment.refund"],
+      "resources": ["payment:*"],
+      "roles_any": ["payments-ops"],
+      "condition": {
+        "all": [
+          {
+            "lte": [
+              { "path": "resource.attributes.amount" },
+              { "value": 500 }
+            ]
+          },
+          {
+            "eq": [
+              { "path": "principal.attributes.mfa" },
+              { "value": true }
+            ]
+          }
+        ]
+      },
+      "obligations": {
+        "audit_level": "high",
+        "require_mfa": true
+      }
+    },
+    {
+      "id": "allow-payment-service-capture",
+      "effect": "allow",
+      "actions": ["payment.capture"],
+      "resources": ["payment:*"],
+      "roles_any": ["payment-service"],
+      "obligations": {
+        "audit_level": "standard"
+      }
+    }
+  ]
+}

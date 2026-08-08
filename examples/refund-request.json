@@ -1,0 +1,26 @@
+{
+  "request_id": "refund-1042",
+  "action": "payment.refund",
+  "principal": {
+    "id": "operator-17",
+    "tenant_id": "acme",
+    "roles": ["payments-ops"],
+    "attributes": {
+      "mfa": true
+    }
+  },
+  "resource": {
+    "type": "payment",
+    "id": "pay-1042",
+    "tenant_id": "acme",
+    "attributes": {
+      "amount": 80,
+      "currency": "EUR",
+      "merchant_status": "active"
+    }
+  },
+  "environment": {
+    "risk_score": 20,
+    "source": "backoffice"
+  }
+}
