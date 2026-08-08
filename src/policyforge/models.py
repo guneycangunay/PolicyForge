@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
 from types import MappingProxyType
-from typing import Mapping, Protocol, TypeAlias
+from typing import Protocol
 
-JsonScalar: TypeAlias = None | bool | int | float | str
-JsonValue: TypeAlias = JsonScalar | list["JsonValue"] | Mapping[str, "JsonValue"]
-Condition: TypeAlias = Mapping[str, JsonValue]
+type JsonScalar = None | bool | int | float | str
+type JsonValue = JsonScalar | list[JsonValue] | Mapping[str, JsonValue]
+type Condition = Mapping[str, JsonValue]
 
 
 class Effect(StrEnum):

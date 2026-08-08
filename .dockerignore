@@ -1,0 +1,9 @@
+.git
+.github
+.policyforge
+__pycache__
+*.pyc
+tests
+docs
+examples
+*.log

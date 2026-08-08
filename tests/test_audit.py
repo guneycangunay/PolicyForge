@@ -34,7 +34,12 @@ class AuditLedgerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             ledger = AuditLedger(Path(directory) / "audit.jsonl", b"k" * 32)
             with ThreadPoolExecutor(max_workers=4) as executor:
-                list(executor.map(lambda index: ledger.record(request(index), decision(index)), range(20)))
+                list(
+                    executor.map(
+                        lambda index: ledger.record(request(index), decision(index)),
+                        range(20),
+                    )
+                )
 
             self.assertEqual(20, ledger.verify())
 

@@ -110,9 +110,9 @@ def _evaluate(condition: Condition, context: Mapping[str, Any]) -> bool:
     if operator == "ne":
         return left != right
     if operator == "in":
-        return isinstance(right, (list, tuple, frozenset)) and left in right
+        return isinstance(right, list | tuple | frozenset) and left in right
     if operator == "contains":
-        return isinstance(left, (str, list, tuple, frozenset)) and right in left
+        return isinstance(left, str | list | tuple | frozenset) and right in left
     try:
         if operator == "lt":
             return left < right
@@ -142,4 +142,4 @@ def _resolve_operand(operand: JsonValue, context: Mapping[str, Any]) -> tuple[bo
 
 
 def _is_sequence(value: object) -> TypeGuard[Sequence[JsonValue]]:
-    return isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray))
+    return isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray)

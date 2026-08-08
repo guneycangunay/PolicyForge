@@ -1,0 +1,17 @@
+services:
+  policyforge:
+    build: .
+    environment:
+      POLICYFORGE_AUDIT_KEY: ${POLICYFORGE_AUDIT_KEY:?set a secret of at least 32 bytes}
+      POLICYFORGE_DATA: /var/lib/policyforge
+    ports:
+      - "8080:8080"
+    volumes:
+      - policyforge-data:/var/lib/policyforge
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+volumes:
+  policyforge-data:

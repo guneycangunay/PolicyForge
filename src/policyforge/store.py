@@ -24,7 +24,14 @@ class PolicyFileStore:
         )
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-                json.dump(document, stream, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False)
+                json.dump(
+                    document,
+                    stream,
+                    indent=2,
+                    sort_keys=True,
+                    ensure_ascii=False,
+                    allow_nan=False,
+                )
                 stream.write("\n")
                 stream.flush()
                 os.fsync(stream.fileno())

@@ -73,7 +73,10 @@ class AuthorizationEngine:
             decision = self._deny(request, "explicit_deny", policy.version, denied)
         else:
             allowed_rules = tuple(
-                sorted((rule for rule in matching if rule.effect is Effect.ALLOW), key=lambda r: r.rule_id)
+                sorted(
+                    (rule for rule in matching if rule.effect is Effect.ALLOW),
+                    key=lambda rule: rule.rule_id,
+                )
             )
             if not allowed_rules:
                 decision = self._deny(request, "default_deny", policy.version)

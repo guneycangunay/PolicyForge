@@ -63,7 +63,9 @@ def _compile_rule(document: Mapping[str, Any]) -> Rule:
 
     raw_obligations = document.get("obligations", {})
     if not isinstance(raw_obligations, Mapping) or len(raw_obligations) > 32:
-        raise PolicyValidationError(f"rule {rule_id} obligations must be an object of at most 32 keys")
+        raise PolicyValidationError(
+            f"rule {rule_id} obligations must be an object of at most 32 keys"
+        )
     obligations = _freeze_json(raw_obligations)
     assert isinstance(obligations, Mapping)
     return Rule(
@@ -109,9 +111,9 @@ def _required_identifier(document: Mapping[str, Any], field: str) -> str:
 
 
 def _freeze_json(value: Any) -> JsonValue:
-    if value is None or isinstance(value, (bool, str)):
+    if value is None or isinstance(value, bool | str):
         return value
-    if isinstance(value, (int, float)) and not isinstance(value, bool):
+    if isinstance(value, int | float) and not isinstance(value, bool):
         if isinstance(value, float) and (value != value or abs(value) == float("inf")):
             raise PolicyValidationError("policy numbers must be finite")
         return value
@@ -128,4 +130,4 @@ def _freeze_json(value: Any) -> JsonValue:
 
 
 def _is_sequence(value: object) -> TypeGuard[Sequence[Any]]:
-    return isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray))
+    return isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray)

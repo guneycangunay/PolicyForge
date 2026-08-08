@@ -38,7 +38,7 @@ class PolicyForgeApplication:
 
 
 class Handler(BaseHTTPRequestHandler):
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         if self.path == "/health/live":
             self._json(HTTPStatus.OK, {"status": "ok"})
             return
@@ -48,14 +48,14 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._json(HTTPStatus.NOT_FOUND, _error("not_found", "route was not found"))
 
-    def do_PUT(self) -> None:  # noqa: N802
+    def do_PUT(self) -> None:
         match = _POLICY_PATH.fullmatch(self.path)
         if match is None:
             self._json(HTTPStatus.NOT_FOUND, _error("not_found", "route was not found"))
             return
         self._handle(lambda: self._publish(match.group(1)))
 
-    def do_POST(self) -> None:  # noqa: N802
+    def do_POST(self) -> None:
         if self.path != "/v1/decisions":
             self._json(HTTPStatus.NOT_FOUND, _error("not_found", "route was not found"))
             return
@@ -131,7 +131,10 @@ def main() -> None:
     port = int(os.environ.get("PORT", "8080"))
     if not 1 <= port <= 65_535:
         raise SystemExit("PORT must be between 1 and 65535")
-    server = PolicyForgeServer(("0.0.0.0", port), PolicyForgeApplication(data_directory, audit_key.encode()))
+    server = PolicyForgeServer(
+        ("0.0.0.0", port),
+        PolicyForgeApplication(data_directory, audit_key.encode()),
+    )
     print(json.dumps({"level": "info", "message": "policyforge ready", "port": port}))
     try:
         server.serve_forever()
